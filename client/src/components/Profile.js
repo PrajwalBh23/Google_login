@@ -9,6 +9,10 @@ import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import { useLocation } from 'react-router-dom';
 import { API } from '../AuthContext';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Profile = () => {
   const [profileData, setProfileData] = useState({
@@ -18,14 +22,20 @@ const Profile = () => {
     profilePhoto: '',
     gender: '',
     linkedin: '',
+    password: '',
   });
   const location = useLocation(); // Use useLocation to access route state
   const { state } = location;
   const tokenFromUrl = state ? state.token : null; // Access token from route state
   const [imagePreview, setImagePreview] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Create a ref for the file input
   const fileInputRef = useRef(null);
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   useEffect(() => {
     // Fetch profile data from backend
@@ -142,183 +152,222 @@ const Profile = () => {
 
 
   return (
-      <div className="profile-page">
-        <div className="profile-left">
-          <div className="profile-photo-section">
-            <div className="photo-wrapper">
-              {imagePreview ? (
-                <>
-                  <img
-                    src={imagePreview}
-                    alt="Profile"
-                    className="profile-photo-preview"
-                    onClick={handleImageClick} // Click handler to show dropdown
-                  />
-                  <Edit style={{ display: "none" }}
-                    className="edit-icon"
-                    onClick={handleImageClick} // Click handler to toggle dropdown
-                  />
-                </>
-              ) : (
-                <div className="default-photo" onClick={handleImageClick}>
-                  Upload Photo
-                  <Edit
-                    className="edit-icon"
-                    onClick={handleImageClick} // Click handler to toggle dropdown
-                  />
-                </div>
-              )}
-            </div>
+    <div className="profile-page">
+      <div className="profile-left">
+        <div className="profile-photo-section">
+          <div className="photo-wrapper">
+            {imagePreview ? (
+              <>
+                <img
+                  src={imagePreview}
+                  alt="Profile"
+                  className="profile-photo-preview"
+                  onClick={handleImageClick} // Click handler to show dropdown
+                />
+                <Edit style={{ display: "none" }}
+                  className="edit-icon"
+                  onClick={handleImageClick} // Click handler to toggle dropdown
+                />
+              </>
+            ) : (
+              <div className="default-photo" onClick={handleImageClick}>
+                Upload Photo
+                <Edit
+                  className="edit-icon"
+                  onClick={handleImageClick} // Click handler to toggle dropdown
+                />
+              </div>
+            )}
+          </div>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              name="profilePhoto"
-              style={{ display: 'none' }}
-              onChange={handlePhotoChange}
-            />
+          <input
+            ref={fileInputRef}
+            type="file"
+            name="profilePhoto"
+            style={{ display: 'none' }}
+            onChange={handlePhotoChange}
+          />
 
-            <div className="profile-name">
-              <h3>{profileData.name || 'Your Name'}</h3>
-            </div>
+          <div className="profile-name">
+            <h3>{profileData.name || 'Your Name'}</h3>
           </div>
         </div>
-
-        <div className="profile-right">
-          <form className='flexing_part' onSubmit={handleSubmit}>
-            <div className="profile-field">
-              <TextField
-                label="Name"
-                variant="outlined"
-                fullWidth
-                name="name"
-                value={profileData.name}
-                onChange={handleInputChange}
-                style={{ marginBottom: "20px" }}
-                InputProps={{
-                  style: {
-                    fontSize: "1.5rem", // Adjust font size
-                    color: 'black', // Text color
-                    backgroundColor: 'white', // Background color
-
-                  }
-                }}
-                InputLabelProps={{
-                  style: {
-                    fontSize: '1.5rem', // Adjust font size for label
-                    color: 'black', // Label color
-                    marginBottom: '10px'
-                  }
-
-                }}
-              />
-            </div>
-
-            <div className="profile-field">
-              <TextField
-                label="Email"
-                variant="outlined"
-                fullWidth
-                name="email"
-                value={profileData.email}
-                onChange={handleInputChange}
-                style={{ marginBottom: "20px" }}
-                InputProps={{
-                  readOnly: true,
-                  style: {
-                    fontSize: "1.5rem",
-                    color: 'black', // Text color
-                    backgroundColor: 'white', // Background color
-
-                  }
-                }}
-                InputLabelProps={{
-                  style: {
-                    fontSize: '1.5rem', // Label font size
-                    color: 'black', // Label color
-                  }
-                }}
-              />
-            </div>
-
-            <div className="profile-field">
-              <TextField
-                label="Phone"
-                variant="outlined"
-                fullWidth
-                name="phone"
-                value={profileData.phone}
-                onChange={handleInputChange}
-                style={{ marginBottom: "20px" }}
-                InputProps={{
-                  style: {
-                    fontSize: "1.5rem",
-                    color: 'black', // Text color
-                    backgroundColor: 'white', // Background color
-
-                  }
-                }}
-                InputLabelProps={{
-                  style: {
-                    fontSize: '1.5rem', // Label font size
-                    color: 'black', // Label color
-                  }
-                }}
-              />
-            </div>            
-
-            <div className="profile-field">
-              <TextField
-                label="Enter LinkedID"
-                variant="outlined"
-                fullWidth
-                name="linkedin"
-                value={profileData.linkedin}
-                onChange={handleInputChange}
-                style={{ marginBottom: "20px" }}
-                InputProps={{
-                  classes: {
-                    input: 'custom-input', // Use the custom class here
-                  },
-                  style: {
-                    fontSize: "1.5rem",
-                    color: 'black',
-                    backgroundColor: 'white',
-                    boxSizing: 'border-box',
-                  }
-                }}
-
-                InputLabelProps={{
-                  style: {
-                    height: "100%",
-                    fontSize: '1.5rem', // Label font size
-                    color: 'black', // Label color
-                  }
-                }}
-              />
-            </div>
-
-            <div className="gender-field" style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', width: '50%', marginLeft:"50px" }}>
-              <FormLabel component="legend" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>
-                Select Gender
-              </FormLabel>
-              <RadioGroup
-                name="gender"
-                value={profileData.gender}
-                onChange={handleInputChange}
-                style={{ display: 'flex', justifyContent: 'center', flexDirection:'row' }} // Center the radio buttons
-              >
-                <FormControlLabel value="Male" control={<Radio style={{color:'white' }}/>} label="Male" />
-                <FormControlLabel value="Female" control={<Radio style={{color:'white' }}/>} label="Female" />
-                <FormControlLabel value="Not Specified" control={<Radio style={{color:'white' }}/>} label="Not Specified" />
-              </RadioGroup>
-            </div>
-            
-
-          </form>
-          <button className='center' type="submit" onClick={handleSubmit}>Save Profile</button>
-        </div>
       </div>
+
+      <div className="profile-right">
+        <form className='flexing_part' onSubmit={handleSubmit}>
+          <div className="profile-field">
+            <TextField
+              label="Name"
+              variant="outlined"
+              fullWidth
+              name="name"
+              value={profileData.name}
+              onChange={handleInputChange}
+              style={{ marginBottom: "20px" }}
+              InputProps={{
+                style: {
+                  fontSize: "1.5rem", // Adjust font size
+                  color: 'black', // Text color
+                  backgroundColor: 'white', // Background color
+
+                }
+              }}
+              InputLabelProps={{
+                style: {
+                  fontSize: '1.5rem', // Adjust font size for label
+                  color: 'black', // Label color
+                  marginBottom: '10px'
+                }
+
+              }}
+            />
+          </div>
+
+          <div className="profile-field">
+            <TextField
+              label="Email"
+              variant="outlined"
+              fullWidth
+              name="email"
+              value={profileData.email}
+              onChange={handleInputChange}
+              style={{ marginBottom: "20px" }}
+              InputProps={{
+                readOnly: true,
+                style: {
+                  fontSize: "1.5rem",
+                  color: 'black', // Text color
+                  backgroundColor: 'white', // Background color
+
+                }
+              }}
+              InputLabelProps={{
+                style: {
+                  fontSize: '1.5rem', // Label font size
+                  color: 'black', // Label color
+                }
+              }}
+            />
+          </div>
+
+          <div className="profile-field">
+            <TextField
+              label="Phone"
+              variant="outlined"
+              fullWidth
+              name="phone"
+              value={profileData.phone}
+              onChange={handleInputChange}
+              style={{ marginBottom: "20px" }}
+              InputProps={{
+                style: {
+                  fontSize: "1.5rem",
+                  color: 'black', // Text color
+                  backgroundColor: 'white', // Background color
+
+                }
+              }}
+              InputLabelProps={{
+                style: {
+                  fontSize: '1.5rem', // Label font size
+                  color: 'black', // Label color
+                }
+              }}
+            />
+          </div>
+
+          <div className="profile-field">
+            <TextField
+              label="Enter LinkedID"
+              variant="outlined"
+              fullWidth
+              name="linkedin"
+              value={profileData.linkedin}
+              onChange={handleInputChange}
+              style={{ marginBottom: "20px" }}
+              InputProps={{
+                classes: {
+                  input: 'custom-input', // Use the custom class here
+                },
+                style: {
+                  fontSize: "1.5rem",
+                  color: 'black',
+                  backgroundColor: 'white',
+                  boxSizing: 'border-box',
+                }
+              }}
+
+              InputLabelProps={{
+                style: {
+                  height: "100%",
+                  fontSize: '1.5rem', // Label font size
+                  color: 'black', // Label color
+                }
+              }}
+            />
+          </div>
+
+          <div className="gender-field" style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', width: '45%', marginLeft: "50px" }}>
+            <FormLabel component="legend" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '10px' }}>
+              Select Gender
+            </FormLabel>
+            <RadioGroup
+              name="gender"
+              value={profileData.gender}
+              onChange={handleInputChange}
+              style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} // Center the radio buttons
+            >
+              <FormControlLabel value="Male" control={<Radio style={{ color: 'white' }} />} label="Male" />
+              <FormControlLabel value="Female" control={<Radio style={{ color: 'white' }} />} label="Female" />
+              <FormControlLabel value="Not Specified" control={<Radio style={{ color: 'white' }} />} label="Not Specified" />
+            </RadioGroup>
+          </div>
+
+          <div className="profile-field">
+            <TextField
+              label="Enter Password"
+              variant="outlined"
+              fullWidth
+              name="password"
+              value={profileData.password}
+              onChange={handleInputChange}
+              style={{ marginBottom: "20px", height: '56px' }} // Set a fixed height
+              type={showPassword ? 'text' : 'password'}
+              InputProps={{
+                classes: {
+                  input: 'custom-input', // Use the custom class here
+                },
+                style: {
+                  fontSize: "1.5rem",
+                  color: 'black',
+                  backgroundColor: 'white',
+                  boxSizing: 'border-box',
+                  height: '100%', // Ensure the height is 100%
+                },
+                endAdornment: (
+                  <InputAdornment position="end" style={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+                    <IconButton onClick={handleTogglePasswordVisibility} edge="end" style={{ height: '100%' }}>
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              InputLabelProps={{
+                style: {
+                  height: "100%",
+                  fontSize: '1.5rem', // Label font size
+                  color: 'black', // Label color
+                },
+              }}
+            />
+          </div>
+
+
+        </form>
+        <button className='center' type="submit" onClick={handleSubmit}>Save Profile</button>
+      </div>
+    </div>
   );
 };
 

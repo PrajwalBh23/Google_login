@@ -1,4 +1,5 @@
-const User = require('../model/Users.js');  // Use `const` to declare User
+const User = require('../model/Users.js'); 
+const bcrypt = require('bcrypt');    
 
 
 const get_details = async (req, res) => {
@@ -7,7 +8,8 @@ const get_details = async (req, res) => {
 
   try {
 
-    const user = await User.findById(userId, 'myImage name email phone linkedin gender');
+    const user = await User.findById(userId, 'myImage name email phone linkedin gender password');
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -25,10 +27,28 @@ const update_details = async (req, res) => {
     phone,
     profilePhoto,
     linkedin,
-    gender
+    gender,
+    password
   } = req.body;
 
   const userId = req.user.id;
+
+  const user = await User.findById(userId);
+
+  if (password) {
+    // If new password is provided, hash it
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (isPasswordCorrect) {
+      // If the new password matches the current password, use the existing hashed password
+      updatedPassword = user.password;
+    } else {
+      // Otherwise, hash the new password
+      const salt = bcrypt.genSaltSync(10);
+      updatedPassword = bcrypt.hashSync(password, salt);
+    }
+  }
+
   const myImage = profilePhoto;
 
   try {
@@ -40,11 +60,12 @@ const update_details = async (req, res) => {
         phone,
         myImage,
         linkedin,
-        gender
+        gender,
+        password : updatedPassword,
       },
       { new: true, runValidators: true } // Add runValidators if you have validation rules
     );
-    
+
     if (!updatedProfile) {
       return res.status(404).json({ message: 'Profile not found' });
     }

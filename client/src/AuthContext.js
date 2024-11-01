@@ -3,7 +3,7 @@ import { jwtDecode } from 'jwt-decode'; // Make sure to install this package
 
 const AuthContext = createContext();
 
-export const API = "https://google-login-lapn.onrender.com";
+export const API = "http://localhost:5000";
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
