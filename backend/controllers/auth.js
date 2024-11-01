@@ -62,6 +62,7 @@ const login = async (req, res, next) => {
 
         // Find the user in either User or Professional collections
         const user = await User.findOne({ email });
+        console.log(user);
 
         // If user not found, return an error
         if (!user) {
