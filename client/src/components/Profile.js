@@ -121,6 +121,20 @@ const Profile = () => {
     e.preventDefault();
     const formData = new FormData();
 
+    const { name, email, phone, linkedin, gender, password } = profileData;
+
+    // Check if all fields are filled
+    if (!name || !email || !phone || !linkedin || !gender || !password) {
+      alert("All fields are required.");
+      return;
+    }
+
+    // Check if phone number is numeric
+    if (!/^\d+$/.test(phone)) {
+      alert("Phone number must be numeric.");
+      return;
+    }
+
     // Add fields to the form data
     for (const [key, value] of Object.entries(profileData)) {
       if (Array.isArray(value)) {
@@ -202,6 +216,7 @@ const Profile = () => {
               variant="outlined"
               fullWidth
               name="name"
+              required 
               value={profileData.name}
               onChange={handleInputChange}
               style={{ marginBottom: "20px" }}
@@ -230,6 +245,7 @@ const Profile = () => {
               variant="outlined"
               fullWidth
               name="email"
+              required // Mark as required
               value={profileData.email}
               onChange={handleInputChange}
               style={{ marginBottom: "20px" }}
@@ -257,6 +273,7 @@ const Profile = () => {
               variant="outlined"
               fullWidth
               name="phone"
+              required // Mark as required
               value={profileData.phone}
               onChange={handleInputChange}
               style={{ marginBottom: "20px" }}
@@ -316,6 +333,7 @@ const Profile = () => {
               name="gender"
               value={profileData.gender}
               onChange={handleInputChange}
+              required // Mark as required
               style={{ display: 'flex', justifyContent: 'center', flexDirection: 'row' }} // Center the radio buttons
             >
               <FormControlLabel value="Male" control={<Radio style={{ color: 'white' }} />} label="Male" />
@@ -330,6 +348,7 @@ const Profile = () => {
               variant="outlined"
               fullWidth
               name="password"
+              required // Mark as required
               value={profileData.password}
               onChange={handleInputChange}
               style={{ marginBottom: "20px", height: '56px' }} // Set a fixed height

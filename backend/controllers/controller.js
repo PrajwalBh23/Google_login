@@ -42,15 +42,22 @@ const update_details = async (req, res) => {
     let updatedPassword = user.password; // Default to the existing password
 
     if (password) {
-      // If new password is provided, check if it's already hashed
-      const isCurrentPasswordCorrect = await bcrypt.compare(password, user.password);
+      // Check if the user.password exists before comparing
+      if (user.password) {
+        // If new password is provided, check if it's already hashed
+        const isCurrentPasswordCorrect = await bcrypt.compare(password, user.password);
 
-      if (isCurrentPasswordCorrect) {
-        // If the provided password matches the hashed password, keep it unchanged
-        updatedPassword = user.password;
+        if (isCurrentPasswordCorrect) {
+          // If the provided password matches the hashed password, keep it unchanged
+          updatedPassword = user.password;
+        } else {
+          // Otherwise, hash the new password
+          const salt = await bcrypt.genSalt(10); // Use async version
+          updatedPassword = await bcrypt.hash(password, salt); // Hash the new password
+        }
       } else {
-        // Otherwise, hash the new password
-        const salt = await bcrypt.genSalt(10); // Use async version
+        // Handle case where user.password is undefined or not hashed
+        const salt = await bcrypt.genSalt(10);
         updatedPassword = await bcrypt.hash(password, salt); // Hash the new password
       }
     }
