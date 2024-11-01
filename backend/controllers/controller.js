@@ -20,7 +20,6 @@ const get_details = async (req, res) => {
 }
 
 const update_details = async (req, res) => {
-
   const {
     name,
     email,
@@ -33,35 +32,39 @@ const update_details = async (req, res) => {
 
   const userId = req.user.id;
 
-  const user = await User.findById(userId);
-
-  if (password) {
-    // If new password is provided, hash it
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-
-    if (isPasswordCorrect) {
-      // If the new password matches the current password, use the existing hashed password
-      updatedPassword = user.password;
-    } else {
-      // Otherwise, hash the new password
-      const salt = bcrypt.genSaltSync(10);
-      updatedPassword = bcrypt.hashSync(password, salt);
-    }
-  }
-
-  const myImage = profilePhoto;
-
   try {
+    // Retrieve the current user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    let updatedPassword = user.password; // Default to the existing password
+
+    if (password) {
+      // If new password is provided, check if it's already hashed
+      const isCurrentPasswordCorrect = await bcrypt.compare(password, user.password);
+
+      if (isCurrentPasswordCorrect) {
+        // If the provided password matches the hashed password, keep it unchanged
+        updatedPassword = user.password;
+      } else {
+        // Otherwise, hash the new password
+        const salt = await bcrypt.genSalt(10); // Use async version
+        updatedPassword = await bcrypt.hash(password, salt); // Hash the new password
+      }
+    }
+
     const updatedProfile = await User.findOneAndUpdate(
       { _id: userId },
       {
         name,
         email,
         phone,
-        myImage,
+        myImage: profilePhoto,
         linkedin,
         gender,
-        password : updatedPassword,
+        password: updatedPassword, // Update with the hashed password
       },
       { new: true, runValidators: true } // Add runValidators if you have validation rules
     );
@@ -76,6 +79,7 @@ const update_details = async (req, res) => {
     res.status(500).json({ message: 'Error updating profile', error: error.message });
   }
 };
+
 
 
 module.exports = { get_details, update_details }; 
