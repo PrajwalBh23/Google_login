@@ -30,6 +30,7 @@ const LoginBox = ({ open, handleClose, isRegistering }) => {
     const checkLoginStatus = async () => {
       await loginOrNot(); // Check if user is logged in
       setUserLoggedIn(true); // Set userLoggedIn state to true
+      console.log(userLoggedIn);
     };
 
     checkLoginStatus();
