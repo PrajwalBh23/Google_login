@@ -66,11 +66,11 @@ const login = async (req, res, next) => {
 
         // If user not found, return an error
         if (!user) {
-            return res.status(401).json({ error: "Invalid Credentials" });
+            return res.status(401).json({ error: "User Not found" });
         }
 
         // Compare the password with the stored hashed password
-        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        const isPasswordCorrect = bcrypt.compare(password, user.password);
 
         // If password doesn't match, return an error
         if (!isPasswordCorrect) {
