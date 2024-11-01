@@ -121,10 +121,10 @@ const Profile = () => {
     e.preventDefault();
     const formData = new FormData();
 
-    const { name, email, phone, linkedin, gender, password } = profileData;
+    const { name, email, phone,gender, password } = profileData;
 
     // Check if all fields are filled
-    if (!name || !email || !phone || !linkedin || !gender || !password) {
+    if (!name || !email || !phone || !gender || !password) {
       alert("All fields are required.");
       return;
     }
